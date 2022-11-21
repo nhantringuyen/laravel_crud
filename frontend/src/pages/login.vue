@@ -59,38 +59,50 @@
 
 <script>
 export default {
-    middleware: 'auth',
-    auth: 'guest',
-
-    data: () => ({
-        errors: [],
-        email: '',
-        password: '',
-        remember: false
-    }),
+    props: {
+      forAdmin: {
+        type: Boolean,
+        default: null,
+      },
+      defaultUrl: {
+        type: String,
+        default: null,
+      },
+    },
+    data() {
+      return {
+        account: {
+          email: '',
+          password: '',
+        },
+        submitted: false,
+      }
+    },
+    // data: () => ({
+    //     errors: [],
+    //     email: '',
+    //     password: '',
+    //     remember: false
+    // }),
 
     head() {
         return {
-            title: 'Sign In — ergodnc',
+            title: 'Đăng nhập',
         }
     },
 
     methods: {
         submitForm(event) {
+          this.submitted = true
             this.errors = [];
-
-            this.$auth.loginWith('cookie', {
-                data: {
-                    email: this.email,
-                    password: this.password,
-                    remember: this.remember
-                },
-            }).then(() => this.$router.push('/'))
-                .catch(error => {
-                    if (error.response.status !== 422) throw error
-
-                    this.errors = Object.values(error.response.data.errors).flat();
-                })
+            console.log(this);
+          // const res = this.forAdmin ? await adminStore().login(this.account) : await userStore().login(this.account)
+          // if (res.token) {
+          //   this.forAdmin ? $adminToken.set(res.token) : $userToken.set(res.token)
+          //   window.location.href = (this.$route.query.redirect as string) || this.defaultUrl
+          // } else {
+          //   this.$toast.add({ severity: 'error', detail: res.message, life: 3000 })
+          // }
         }
     }
 }

@@ -9,7 +9,7 @@ module.exports = {
     "./nuxt.config.{js,ts}",
     "./src/app.vue",
   ],
-  darkMode: false,
+  darkMode: 'media',
   theme: {
     extend: {
       transitionProperty: {

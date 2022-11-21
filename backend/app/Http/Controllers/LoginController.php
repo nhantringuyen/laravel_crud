@@ -8,9 +8,9 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 class LoginController extends Controller
 {
-    public function __invoke()
+    public function __invoke(Request $request)
     {
-        request()->validate([
+        $request->validate([
             'email' => ['required', 'string', 'email'],
             'password' => ['required'],
         ]);
@@ -18,7 +18,7 @@ class LoginController extends Controller
         /**
          * We are authenticating a request from our frontend.
          */
-        if (EnsureFrontendRequestsAreStateful::fromFrontend(request())) {
+        if (EnsureFrontendRequestsAreStateful::fromFrontend($request)) {
             $this->authenticateFrontend();
         }
         /**
@@ -29,7 +29,7 @@ class LoginController extends Controller
         }
     }
 
-    private function authenticateFrontend()
+    private function authenticateFrontend(Request $request)
     {
 //        $credentials = $request->validate([
 //            'email' => ['required', 'email'],
@@ -37,12 +37,13 @@ class LoginController extends Controller
 //        ]);
         if (! Auth::guard('web')
             ->attempt(
-                request()->only('email', 'password'),
-                request()->boolean('remember')
+                $request->only('email', 'password'),
+                $request->boolean('remember')
             )) {
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
         }
+        $request->session()->regenerate();
     }
 }
